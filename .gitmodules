@@ -1,0 +1,3 @@
+[submodule "playwright-java"]
+	path = playwright-java
+	url = https://github.com/microsoft/playwright-java.git

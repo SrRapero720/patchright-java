@@ -1,0 +1,127 @@
+name: Patchright Java Release
+
+on:
+  schedule:
+    # Check daily for new playwright-java releases
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      playwright_version:
+        description: 'Playwright Java version to patch (e.g., 1.52.0)'
+        required: false
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for new playwright-java release
+        id: check
+        run: |
+          if [ -n "${{ github.event.inputs.playwright_version }}" ]; then
+            VERSION="${{ github.event.inputs.playwright_version }}"
+          else
+            VERSION=$(curl -s https://api.github.com/repos/microsoft/playwright-java/releases/latest | jq -r '.tag_name' | sed 's/^v//')
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          # Check if we already have this version released
+          EXISTING=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/tags/v${VERSION} | jq -r '.tag_name // empty')
+          if [ -z "$EXISTING" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "New version to release: $VERSION"
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "Version $VERSION already released"
+          fi
+
+  build-and-release:
+    needs: check-release
+    if: needs.check-release.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Checkout specific playwright-java version
+        run: |
+          VERSION=${{ needs.check-release.outputs.version }}
+          cd playwright-java
+          git fetch --tags
+          git checkout "v${VERSION}"
+
+      - name: Copy to release directory
+        run: |
+          rm -rf patchright-java-release
+          rsync -a --exclude='.git' playwright-java/ patchright-java-release/
+
+      - name: Build patcher
+        run: |
+          cd patcher
+          mvn -q package -DskipTests
+
+      - name: Run patcher
+        run: |
+          VERSION=${{ needs.check-release.outputs.version }}
+          java -jar patcher/target/patchright-patcher-1.0-SNAPSHOT.jar \
+            patchright-java-release \
+            io.github.kailbin \
+            "$VERSION" \
+            "$VERSION"
+
+      - name: Download patchright driver
+        run: |
+          cd patchright-java-release
+          bash scripts/download_driver.sh
+
+      - name: Build patchright-java
+        run: |
+          cd patchright-java-release
+          mvn install -DskipTests -Dspotbugs.skip=true -Dcheckstyle.skip=true
+
+      - name: Publish to GitHub Packages
+        run: |
+          cd patchright-java-release
+          mvn deploy -DskipTests -Dspotbugs.skip=true -Dcheckstyle.skip=true \
+            -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.check-release.outputs.version }}
+          name: Patchright Java v${{ needs.check-release.outputs.version }}
+          body: |
+            Patchright Java v${{ needs.check-release.outputs.version }}
+
+            Based on [playwright-java v${{ needs.check-release.outputs.version }}](https://github.com/microsoft/playwright-java/releases/tag/v${{ needs.check-release.outputs.version }})
+
+            ## Installation (GitHub Packages)
+            Add to your `pom.xml`:
+            ```xml
+            <dependency>
+              <groupId>io.github.kailbin</groupId>
+              <artifactId>patchright</artifactId>
+              <version>${{ needs.check-release.outputs.version }}</version>
+            </dependency>
+            ```
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

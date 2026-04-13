@@ -1,0 +1,97 @@
+pr: none
+
+trigger:
+  tags:
+    include:
+    - '*'
+
+resources:
+  repositories:
+  - repository: 1esPipelines
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    pool:
+      name: DevDivPlaywrightAzurePipelinesUbuntu2204
+      os: linux
+    sdl:
+      sourceAnalysisPool:
+        name: DevDivPlaywrightAzurePipelinesWindows2022
+        # The image must be windows-based due to restrictions of the SDL tools. See: https://aka.ms/AAo6v8e
+        # In the case of a windows build, this can be the same as the above pool image.
+        os: windows
+      suppression:
+        suppressionFile: $(Build.SourcesDirectory)\.azure-pipelines\guardian\SDL\.gdnsuppress
+    stages:
+    - stage: Stage
+      jobs:
+      - job: Build
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            path: $(Build.ArtifactStagingDirectory)/esrp-build
+            artifact: esrp-build
+        steps:
+        - bash: |
+            if [[ ! "$CURRENT_BRANCH" =~ ^v1\..* ]]; then
+              echo "Can only publish from a release tag branch (v1.*)."
+              echo "Unexpected branch name: $CURRENT_BRANCH"
+              exit 1
+            fi
+          env:
+            CURRENT_BRANCH: ${{ variables['Build.SourceBranchName'] }}
+          displayName: "Check the branch is a release branch"
+        
+        - bash: |
+            echo "importing GPG key:"
+            # Pipeline variables do not preserve line ends so we use base64 instead of --armored as a workaround.
+            echo $GPG_PRIVATE_KEY_BASE64 | base64 -d | gpg --batch --import
+            echo "list keys after import:"
+            gpg --list-keys
+          env:
+           GPG_PRIVATE_KEY_BASE64: $(GPG_PRIVATE_KEY_BASE64) # secret variable has to be mapped to an env variable
+          displayName: "Import gpg key"
+        
+        - bash: ./scripts/download_driver.sh
+          displayName: 'Download driver'
+        
+        - bash: mvn -B deploy -D skipTests --no-transfer-progress --activate-profiles release -D gpg.passphrase=$GPG_PASSPHRASE -DaltDeploymentRepository=snapshot-repo::default::file:$(Build.ArtifactStagingDirectory)/esrp-build
+          displayName: 'Build and deploy to a local directory'
+          env:
+            GPG_PASSPHRASE: $(GPG_PASSPHRASE) # secret variable has to be mapped to an env variable
+
+      - job: Publish
+        dependsOn: Build
+        templateContext:
+          type: releaseJob
+          isProduction: true
+          inputs:
+          - input: pipelineArtifact
+            artifactName: esrp-build
+            targetPath: $(Build.ArtifactStagingDirectory)/esrp-build
+        steps:
+          - checkout: none
+          - task: EsrpRelease@9
+            inputs:
+              connectedservicename: 'Playwright-ESRP-PME'
+              usemanagedidentity: true
+              keyvaultname: 'playwright-esrp-pme'
+              signcertname: 'ESRP-Release-Sign'
+              clientid: '13434a40-7de4-4c23-81a3-d843dc81c2c5'
+              intent: 'PackageDistribution'
+              contenttype: 'Maven'
+              # Keeping it commented out as a workaround for:
+              # https://portal.microsofticm.com/imp/v3/incidents/incident/499972482/summary
+              # contentsource: 'folder'
+              folderlocation: '$(Build.ArtifactStagingDirectory)/esrp-build'
+              waitforreleasecompletion: true
+              owners: 'yurys@microsoft.com'
+              approvers: 'yurys@microsoft.com'
+              serviceendpointurl: 'https://api.esrp.microsoft.com'
+              mainpublisher: 'Playwright'
+              domaintenantid: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+            displayName: 'ESRP Release to Maven'
