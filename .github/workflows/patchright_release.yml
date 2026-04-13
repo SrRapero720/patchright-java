@@ -81,7 +81,6 @@ jobs:
           java -jar patchright-java-patcher/target/patchright-java-patcher-*.jar \
             patchright-java-release \
             cc.marbro.patchright \
-            "$VERSION" \
             "$VERSION"
 
       - name: Download patchright driver

@@ -70,7 +70,6 @@ echo "[Step 4] Running patcher on patchright-java-release/..."
 java -jar $PROJECT_DIR/patchright-java-patcher/target/patchright-java-patcher-*.jar \
     "$RELEASE_DIR" \
     "$GROUP_ID" \
-    "$PLAYWRIGHT_VERSION" \
     "$PLAYWRIGHT_VERSION"
 
 # Step 5: Download patchright driver

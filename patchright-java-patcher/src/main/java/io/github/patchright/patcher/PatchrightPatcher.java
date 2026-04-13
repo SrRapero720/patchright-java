@@ -24,14 +24,12 @@ public class PatchrightPatcher {
 
     private final Path playwrightPath;
     private final String groupId;
-    private final String driverVersion;
-    private final String packageVersion;
+    private final String version;
 
-    public PatchrightPatcher(Path playwrightPath, String groupId, String driverVersion, String packageVersion) {
+    public PatchrightPatcher(Path playwrightPath, String groupId, String version) {
         this.playwrightPath = playwrightPath;
         this.groupId = groupId;
-        this.driverVersion = driverVersion;
-        this.packageVersion = packageVersion;
+        this.version = version;
     }
 
     public void patchAll() throws Exception {
@@ -41,7 +39,7 @@ public class PatchrightPatcher {
 
         // 1. Driver URL patch
         PatchLog.info("[1/6] Patching driver download URL...");
-        DriverPatch.apply(playwrightPath);
+        DriverPatch.apply(playwrightPath, version);
 
         // 2. Source URL removal (anti-detection)
         PatchLog.info("[2/6] Removing sourceURL annotations...");
@@ -61,7 +59,7 @@ public class PatchrightPatcher {
 
         // 6. Maven/package metadata
         PatchLog.info("[6/6] Patching Maven metadata...");
-        MetadataPatch.apply(playwrightPath, groupId, driverVersion, packageVersion);
+        MetadataPatch.apply(playwrightPath, groupId, version);
 
         PatchLog.info();
         PatchLog.info("--- Patching complete! ---");
@@ -71,8 +69,7 @@ public class PatchrightPatcher {
     public static void main(String[] args) throws Exception {
         String playwrightDir = args.length > 0 ? args[0] : "playwright-java";
         String groupId = args.length > 1 ? args[1] : "cc.marbro.patchright";
-        String driverVersion = args.length > 2 ? args[2] : null;
-        String packageVersion = args.length > 3 ? args[3] : null;
+        String version = args.length > 2 ? args[2] : null;
 
         Path playwrightPath = Paths.get(playwrightDir);
         if (!playwrightPath.toFile().isDirectory()) {
@@ -81,7 +78,7 @@ public class PatchrightPatcher {
             System.exit(1);
         }
 
-        PatchrightPatcher patcher = new PatchrightPatcher(playwrightPath, groupId, driverVersion, packageVersion);
+        PatchrightPatcher patcher = new PatchrightPatcher(playwrightPath, groupId, version);
         patcher.patchAll();
     }
 }

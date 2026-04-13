@@ -1,5 +1,7 @@
 package io.github.patchright.patcher.patches;
 
+import io.github.patchright.patcher.assist.PatchLog;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -11,8 +13,6 @@ import java.nio.file.Path;
 public class DriverPatch {
 
     /**
-     * FIXME 覆盖 DRIVER_VERSION 文件里面的版本，不跟随官方版本，跟随 patchright 发布的版本
-     *
      * @link /playwright-java/scripts/DRIVER_VERSION
      */
     private static final String PATCH_DRIVER_VERSION = "scripts/DRIVER_VERSION";
@@ -34,14 +34,29 @@ public class DriverPatch {
     private static final String OLD_URL_PATTERN = "URL=$URL/$FILE_NAME";
     private static final String NEW_URL_PATTERN = "URL=$URL/v${DRIVER_VERSION}/$FILE_NAME";
 
-    public static void apply(Path playwrightPath) throws IOException {
+    public static void apply(Path playwrightPath, String version) throws IOException {
+        // 覆盖 DRIVER_VERSION 文件里面的版本，官网正式版中版本号可能会有 子后缀，导致 DownloadScript 读不到文件里面的版本，下载失败
+        setPatchDriverVersion(playwrightPath, version);
+        //
         patchDownloadScript(playwrightPath);
     }
+
+    private static void setPatchDriverVersion(Path playwrightPath, String version) throws IOException {
+        Path scriptPath = playwrightPath.resolve(PATCH_DRIVER_VERSION);
+        if (!Files.exists(scriptPath)) {
+            PatchLog.error("  WARNING: " + PATCH_DRIVER_VERSION + " not found at " + scriptPath);
+            return;
+        }
+
+        Files.write(scriptPath, version.getBytes(StandardCharsets.UTF_8));
+        PatchLog.info("  Patched: " + scriptPath);
+    }
+
 
     private static void patchDownloadScript(Path playwrightPath) throws IOException {
         Path scriptPath = playwrightPath.resolve(PATCH_DOWNLOAD_SH);
         if (!Files.exists(scriptPath)) {
-            System.out.println("  WARNING: download_driver.sh not found at " + scriptPath);
+            PatchLog.error("  WARNING: " + PATCH_DOWNLOAD_SH + " not found at " + scriptPath);
             return;
         }
 
@@ -54,6 +69,6 @@ public class DriverPatch {
         content = content.replace(OLD_URL_PATTERN, NEW_URL_PATTERN);
 
         Files.write(scriptPath, content.getBytes(StandardCharsets.UTF_8));
-        System.out.println("  Patched: " + scriptPath);
+        PatchLog.info("  Patched: " + scriptPath);
     }
 }

@@ -22,7 +22,7 @@ public class MetadataPatch {
     private static final String OLD_ARTIFACT_ID_PLAYWRIGHT = "<artifactId>playwright</artifactId>";
     private static final String NEW_ARTIFACT_ID_PATCHRIGHT = "<artifactId>patchright</artifactId>";
 
-    public static void apply(Path playwrightPath, String newGroupId, String driverVersion, String packageVersion)
+    public static void apply(Path playwrightPath, String newGroupId, String packageVersion)
         throws IOException {
 
         // Patch all pom.xml files
