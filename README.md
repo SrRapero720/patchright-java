@@ -119,7 +119,13 @@ With the right setup, Patchright is considered undetectable and passes:
 
 ## Development
 
-This project uses a JavaParser-based AST patcher to transform the official [playwright-java](https://github.com/microsoft/playwright-java) source code into patchright-java.
+This project uses a JavaParser-based AST patcher to transform the official [playwright-java](https://github.com/microsoft/playwright-java) source code into patchright-java. 
+
+**Official Package Requirements Compliance**  
+This repository fully complies with the [official community-driven guidelines](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright/issues/89) set by the core maintainer:
+- ✅ **Automatic CD**: Built natively with AST-based patching.
+- ✅ **Extended API Support**: Full support for `isolatedContext` and `focusControl`.
+- ✅ **InitScript Routing**: Intercepts document requests via internal fallback logic to securely run stealth scripts before pages load.
 
 ### Building from source
 
