@@ -1,0 +1,59 @@
+package io.github.patchright.patcher.patches;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * Patches the driver download script to use Patchright releases, instead of the official Playwright CDN.
+ */
+public class DriverPatch {
+
+    /**
+     * FIXME 覆盖 DRIVER_VERSION 文件里面的版本，不跟随官方版本，跟随 patchright 发布的版本
+     *
+     * @link /playwright-java/scripts/DRIVER_VERSION
+     */
+    private static final String PATCH_DRIVER_VERSION = "scripts/DRIVER_VERSION";
+    /**
+     * @link /playwright-java/scripts/download_driver.sh
+     */
+    private static final String PATCH_DOWNLOAD_SH = "scripts/download_driver.sh";
+
+    /**
+     * https://github.com/Kaliiiiiiiiii-Vinyzu/patchright/releases
+     */
+    private static final String OLD_CDN_URL = "https://cdn.playwright.dev/builds/driver";
+    private static final String NEW_CDN_URL = "https://github.com/Kaliiiiiiiiii-Vinyzu/patchright/releases/download";
+
+    /**
+     * _______________________playwright-${DRIVER_VERSION}-${PLATFORM}.zip
+     * v${DRIVER_VERSION}/playwright-${DRIVER_VERSION}-${PLATFORM}.zip
+     */
+    private static final String OLD_URL_PATTERN = "URL=$URL/$FILE_NAME";
+    private static final String NEW_URL_PATTERN = "URL=$URL/v${DRIVER_VERSION}/$FILE_NAME";
+
+    public static void apply(Path playwrightPath) throws IOException {
+        patchDownloadScript(playwrightPath);
+    }
+
+    private static void patchDownloadScript(Path playwrightPath) throws IOException {
+        Path scriptPath = playwrightPath.resolve(PATCH_DOWNLOAD_SH);
+        if (!Files.exists(scriptPath)) {
+            System.out.println("  WARNING: download_driver.sh not found at " + scriptPath);
+            return;
+        }
+
+        String content = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
+
+        // Replace CDN URL
+        content = content.replace(OLD_CDN_URL, NEW_CDN_URL);
+
+        // Fix URL construction to include version prefix in path
+        content = content.replace(OLD_URL_PATTERN, NEW_URL_PATTERN);
+
+        Files.write(scriptPath, content.getBytes(StandardCharsets.UTF_8));
+        System.out.println("  Patched: " + scriptPath);
+    }
+}

@@ -17,7 +17,7 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Arguments
 PLAYWRIGHT_VERSION="${1:-}"
-GROUP_ID="${2:-io.github.kailbin}"
+GROUP_ID="${2:-cc.marbro.patchright}"
 
 echo "================================================"
 echo " Patchright Java Builder"
@@ -52,20 +52,22 @@ echo "  Group ID: $GROUP_ID"
 echo ""
 echo "[Step 2] Copying sources to patchright-java-release/..."
 rm -rf "$RELEASE_DIR"
-rsync -a --exclude='.git' "$SUBMODULE_DIR/" "$RELEASE_DIR/"
+# rsync -a --exclude='.git' "$SUBMODULE_DIR/" "$RELEASE_DIR/"
+# keep .git to make it easier to diff with original sources after patching
+cp -r "$SUBMODULE_DIR/" "$RELEASE_DIR/"
 echo "  Done."
 
 # Step 3: Build patcher
 echo ""
 echo "[Step 3] Building patcher tool..."
-cd "$PROJECT_DIR/patcher"
+cd "$PROJECT_DIR/patchright-java-patcher"
 mvn -q package -DskipTests
 cd "$PROJECT_DIR"
 
 # Step 4: Run patcher
 echo ""
 echo "[Step 4] Running patcher on patchright-java-release/..."
-java -jar "$PROJECT_DIR/patcher/target/patchright-patcher-1.0-SNAPSHOT.jar" \
+java -jar $PROJECT_DIR/patchright-java-patcher/target/patchright-java-patcher-*.jar \
     "$RELEASE_DIR" \
     "$GROUP_ID" \
     "$PLAYWRIGHT_VERSION" \

@@ -1,14 +1,17 @@
 package io.github.patchright.patcher;
 
+import io.github.patchright.patcher.assist.PatchLog;
+import io.github.patchright.patcher.patches.*;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
  * Main entry point for the Patchright Java Patcher.
- * 
+ * <p>
  * This tool applies AST-based patches to the playwright-java source code
  * to create patchright-java, mirroring what the .NET version does with Roslyn.
- * 
+ * <p>
  * Categories of patches:
  * 1. DRIVER PATCHES: Point to Patchright driver releases
  * 2. SCRIPT INJECTION PATCHES: Remove sourceURL comments that reveal automation
@@ -32,49 +35,49 @@ public class PatchrightPatcher {
     }
 
     public void patchAll() throws Exception {
-        System.out.println();
-        System.out.println("--- Patching Playwright Java to create Patchright ---");
-        System.out.println();
+        PatchLog.info();
+        PatchLog.info("--- Patching Playwright Java to create Patchright ---");
+        PatchLog.info();
 
         // 1. Driver URL patch
-        System.out.println("[1/6] Patching driver download URL...");
+        PatchLog.info("[1/6] Patching driver download URL...");
         DriverPatch.apply(playwrightPath);
 
         // 2. Source URL removal (anti-detection)
-        System.out.println("[2/6] Removing sourceURL annotations...");
+        PatchLog.info("[2/6] Removing sourceURL annotations...");
         ScriptInjectionPatch.apply(playwrightPath);
 
         // 3. IsolatedContext parameter injection
-        System.out.println("[3/6] Adding isolatedContext parameter to evaluate methods...");
+        PatchLog.info("[3/6] Adding isolatedContext parameter to evaluate methods...");
         IsolatedContextPatch.apply(playwrightPath);
 
         // 4. Route injection for InitScript
-        System.out.println("[4/6] Adding InitScript route injection...");
+        PatchLog.info("[4/6] Adding InitScript route injection...");
         RouteInjectionPatch.apply(playwrightPath);
 
         // 5. FocusControl parameter
-        System.out.println("[5/6] Adding focusControl parameter...");
+        PatchLog.info("[5/6] Adding focusControl parameter...");
         FocusControlPatch.apply(playwrightPath);
 
         // 6. Maven/package metadata
-        System.out.println("[6/6] Patching Maven metadata...");
+        PatchLog.info("[6/6] Patching Maven metadata...");
         MetadataPatch.apply(playwrightPath, groupId, driverVersion, packageVersion);
 
-        System.out.println();
-        System.out.println("--- Patching complete! ---");
-        System.out.println();
+        PatchLog.info();
+        PatchLog.info("--- Patching complete! ---");
+        PatchLog.info();
     }
 
     public static void main(String[] args) throws Exception {
         String playwrightDir = args.length > 0 ? args[0] : "playwright-java";
-        String groupId = args.length > 1 ? args[1] : "io.github.kailbin";
+        String groupId = args.length > 1 ? args[1] : "cc.marbro.patchright";
         String driverVersion = args.length > 2 ? args[2] : null;
         String packageVersion = args.length > 3 ? args[3] : null;
 
         Path playwrightPath = Paths.get(playwrightDir);
         if (!playwrightPath.toFile().isDirectory()) {
-            System.err.println("Error: Playwright source directory not found: " + playwrightDir);
-            System.err.println("Usage: java -jar patchright-patcher.jar <playwright-java-dir> [groupId] [driverVersion] [packageVersion]");
+            PatchLog.error("Error: Playwright source directory not found: " + playwrightDir);
+            PatchLog.error("Usage: java -jar patchright-java-patcher.jar <playwright-java-dir> [groupId] [driverVersion] [packageVersion]");
             System.exit(1);
         }
 

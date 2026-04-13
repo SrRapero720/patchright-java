@@ -1,12 +1,3 @@
-# Build outputs
-patchright-java-release/target/
-patchright-java-release/*/target/
-patcher/target/
-*.class
-*.jar
-!patcher/pom.xml
-
-# IDE
 .idea/
 *.iml
 .vscode/
@@ -20,10 +11,10 @@ Thumbs.db
 
 # Maven
 target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
+pom.xml.*
+
 # Maven Shade Plugin
 dependency-reduced-pom.xml
+
+#
+patchright-java-release/

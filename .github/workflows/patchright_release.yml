@@ -78,9 +78,9 @@ jobs:
       - name: Run patcher
         run: |
           VERSION=${{ needs.check-release.outputs.version }}
-          java -jar patcher/target/patchright-patcher-1.0-SNAPSHOT.jar \
+          java -jar patchright-java-patcher/target/patchright-java-patcher-*.jar \
             patchright-java-release \
-            io.github.kailbin \
+            cc.marbro.patchright \
             "$VERSION" \
             "$VERSION"
 
@@ -116,7 +116,7 @@ jobs:
             Add to your `pom.xml`:
             ```xml
             <dependency>
-              <groupId>io.github.kailbin</groupId>
+              <groupId>cc.marbro.patchright</groupId>
               <artifactId>patchright</artifactId>
               <version>${{ needs.check-release.outputs.version }}</version>
             </dependency>

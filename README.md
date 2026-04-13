@@ -13,7 +13,7 @@ Add to your `pom.xml`:
 
 ```xml
 <dependency>
-  <groupId>io.github.kailbin</groupId>
+  <groupId>cc.marbro.patchright</groupId>
   <artifactId>patchright</artifactId>
   <version>LATEST_VERSION</version>
 </dependency>
@@ -39,7 +39,7 @@ Patchright is a **drop-in replacement** for Playwright. Just change the import:
 import com.microsoft.playwright.*;
 
 // After (Patchright) - same API!
-import io.github.kailbin.patchright.*;
+import cc.marbro.patchright.patchright.*;
 ```
 
 > **Warning**
