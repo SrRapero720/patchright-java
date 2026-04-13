@@ -32,14 +32,10 @@ Since this is published to GitHub Packages, you'll also need to configure the re
 
 ## Usage
 
-Patchright is a **drop-in replacement** for Playwright. Just change the import:
+Patchright is a **drop-in replacement** for Playwright. Since only the Maven coordinates (`groupId` and `artifactId`) were modified and the internal Java package names remain unchanged, **no code adjustments are necessary**. Just keep using the standard Playwright imports:
 
 ```java
-// Before (Playwright)
 import com.microsoft.playwright.*;
-
-// After (Patchright) - same API!
-import cc.marbro.patchright.patchright.*;
 ```
 
 > **Warning**
