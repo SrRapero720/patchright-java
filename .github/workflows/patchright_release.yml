@@ -1,9 +1,9 @@
 name: Patchright Java Release
 
 on:
-  schedule:
-    # Check daily for new playwright-java releases
-    - cron: '0 6 * * *'
+  # schedule:
+  #   # Check daily for new playwright-java releases
+  #   - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       playwright_version:
