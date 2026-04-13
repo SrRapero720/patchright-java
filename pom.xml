@@ -10,11 +10,10 @@
     <packaging>pom</packaging>
 
     <name>Patchright Java Parent</name>
-    <description>Parent POM for Patchright Java and its tools</description>
 
     <!-- 默认包含 patcher 模块 -->
     <modules>
-        <module>patcher</module>
+        <module>patchright-java-patcher</module>
     </modules>
 
     <!-- 动态包含 release 模块（仅在其生成后才生效，避免初次 clone 时报错） -->
