@@ -25,7 +25,7 @@ Since this is published to GitHub Packages, you'll also need to configure the re
 <repositories>
   <repository>
     <id>github</id>
-    <url>https://maven.pkg.github.com/Kaliiiiiiiiii-Vinyzu/patchright-java</url>
+    <url>https://maven.pkg.github.com/mar-bros/patchright-java</url>
   </repository>
 </repositories>
 ```
