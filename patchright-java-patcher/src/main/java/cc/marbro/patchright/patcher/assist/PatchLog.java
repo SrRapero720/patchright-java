@@ -1,4 +1,4 @@
-package io.github.patchright.patcher.assist;
+package cc.marbro.patchright.patcher.assist;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

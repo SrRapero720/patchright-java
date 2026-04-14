@@ -1,4 +1,4 @@
-package io.github.patchright.patcher.patches;
+package cc.marbro.patchright.patcher.patches;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -7,7 +7,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import io.github.patchright.patcher.assist.PatchUtil;
+import cc.marbro.patchright.patcher.assist.PatchUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;

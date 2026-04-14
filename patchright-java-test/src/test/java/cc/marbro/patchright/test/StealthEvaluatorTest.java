@@ -1,4 +1,4 @@
-package io.github.patchright.test;
+package cc.marbro.patchright.test;
 
 import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;

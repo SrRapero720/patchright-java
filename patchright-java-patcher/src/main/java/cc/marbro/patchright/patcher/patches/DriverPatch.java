@@ -1,6 +1,6 @@
-package io.github.patchright.patcher.patches;
+package cc.marbro.patchright.patcher.patches;
 
-import io.github.patchright.patcher.assist.PatchLog;
+import cc.marbro.patchright.patcher.assist.PatchLog;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

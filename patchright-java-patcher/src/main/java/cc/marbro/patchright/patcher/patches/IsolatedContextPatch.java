@@ -1,4 +1,4 @@
-package io.github.patchright.patcher.patches;
+package cc.marbro.patchright.patcher.patches;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -10,7 +10,7 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.PrimitiveType;
-import io.github.patchright.patcher.assist.PatchUtil;
+import cc.marbro.patchright.patcher.assist.PatchUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;

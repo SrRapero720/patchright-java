@@ -1,4 +1,4 @@
-package io.github.patchright.patcher.assist;
+package cc.marbro.patchright.patcher.assist;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;

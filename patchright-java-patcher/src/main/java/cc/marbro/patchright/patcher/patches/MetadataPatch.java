@@ -1,4 +1,4 @@
-package io.github.patchright.patcher.patches;
+package cc.marbro.patchright.patcher.patches;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

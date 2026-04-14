@@ -1,4 +1,4 @@
-package io.github.patchright.test;
+package cc.marbro.patchright.test;
 
 import cc.marbro.patchright.assist.PatchrightManager;
 import com.microsoft.playwright.BrowserContext;

@@ -12,8 +12,11 @@
     <name>Patchright Java Parent</name>
 
     <modules>
+        <!-- patch Microsoft playwright-java   -->
         <module>patchright-java-patcher</module>
+        <!-- 对 patchright-java 进行测试 -->
         <module>patchright-java-test</module>
+        <!-- 辅助使用 playwright-java / patchright-java   -->
         <module>patchright-java-assist</module>
     </modules>
 

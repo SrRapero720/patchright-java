@@ -1,7 +1,7 @@
-package io.github.patchright.patcher;
+package cc.marbro.patchright.patcher;
 
-import io.github.patchright.patcher.assist.PatchLog;
-import io.github.patchright.patcher.patches.*;
+import cc.marbro.patchright.patcher.assist.PatchLog;
+import cc.marbro.patchright.patcher.patches.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -23,7 +23,7 @@ Patchright Java 的核心适配目标是 1:1 对标 `patchright`（Node.js / Pyt
 
 如果原版的 Playwright-Java 或主线 Patchright 发生特征演进，这里的适配和调整成本非常低：
 1. **Driver 级特性的自动继承**：Playwright-Java 在底层其实是通过启动内部捆绑的 Node.js Driver 来进行真实通信的。由于 `DriverPatch` 会将下载源直接指向**已经彻底改造好**的 `Patchright NodeJS Driver` 产物，因此 **90% 的底层隐形机制（如 Chrome UA 伪装、Headless 模式绕过、核心协议拦截等）不需要在 Java 测重写**，只要升级 Driver 版本即可直接享用最新的防检测成果。
-2. **Binding 级快速微调**：仅限于停留在 Java 接口层面（Binding 层）的漏洞（如 `isolatedContext` 环境隔离、代码 `sourceURL` 等注入标识），才需要依赖上述的 AST Patch 进行外科手术。如果上游接口大改，开发者只需在 `io.github.patchright.patcher.patches` 目录下修改或追加轻量级的特征替换规则节点（Node Finder），即可快速完成逻辑跟随。
+2. **Binding 级快速微调**：仅限于停留在 Java 接口层面（Binding 层）的漏洞（如 `isolatedContext` 环境隔离、代码 `sourceURL` 等注入标识），才需要依赖上述的 AST Patch 进行外科手术。如果上游接口大改，开发者只需在 `cc.marbro.patchright.patcher.patches` 目录下修改或追加轻量级的特征替换规则节点（Node Finder），即可快速完成逻辑跟随。
 
 ### 2.2 防漏检查：从脚本断言到强类型校验的升维
 

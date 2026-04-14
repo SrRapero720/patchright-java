@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>io.github.patchright.patcher.PatchrightPatcher</mainClass>
+                            <mainClass>cc.marbro.patchright.patcher.PatchrightPatcher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
