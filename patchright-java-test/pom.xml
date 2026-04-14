@@ -21,7 +21,19 @@
             <groupId>cc.marbro.patchright</groupId>
             <artifactId>patchright-java-assist</artifactId>
             <version>${project.version}</version>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>patchright</artifactId>-->
+<!--                    <groupId>*</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.microsoft.playwright</groupId>-->
+<!--            <artifactId>playwright</artifactId>-->
+<!--            <version>${patchright.version}</version>-->
+<!--        </dependency>-->
 
         <!-- JUnit 5 API -->
         <dependency>

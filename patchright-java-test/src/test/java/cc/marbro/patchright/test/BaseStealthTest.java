@@ -7,10 +7,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
+ * @see BrotectorTest ✅
  * @see FPscannerTest ✅
- * @see BrotectorTest ❌
- * @see CloudflareTest ❌
- * @see CreepJSTest ❌
+ * @see CloudflareTest ❌ToDo Check
+ * @see CreepJSTest ❌ToDo Check
  */
 public class BaseStealthTest {
 
