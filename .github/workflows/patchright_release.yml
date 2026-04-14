@@ -25,7 +25,7 @@ jobs:
           if [ -n "${{ github.event.inputs.playwright_version }}" ]; then
             VERSION="${{ github.event.inputs.playwright_version }}"
           else
-            VERSION=$(curl -s https://api.github.com/repos/microsoft/playwright-java/releases/latest | jq -r '.tag_name' | sed 's/^v//')
+            VERSION=$(curl -s https://api.github.com/repos/Kaliiiiiiiiii-Vinyzu/patchright/releases/latest | jq -r '.tag_name' | sed 's/^v//')
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
@@ -58,40 +58,10 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Checkout specific playwright-java version
+      - name: Build and Patch Sources
         run: |
           VERSION=${{ needs.check-release.outputs.version }}
-          cd playwright-java
-          git fetch --tags
-          git checkout "v${VERSION}"
-
-      - name: Copy to release directory
-        run: |
-          rm -rf patchright-java-release
-          rsync -a --exclude='.git' playwright-java/ patchright-java-release/
-
-      - name: Build patcher
-        run: |
-          cd patchright-java-patcher
-          mvn -q package -DskipTests
-
-      - name: Run patcher
-        run: |
-          VERSION=${{ needs.check-release.outputs.version }}
-          java -jar patchright-java-patcher/target/patchright-java-patcher-*.jar \
-            patchright-java-release \
-            cc.marbro.patchright \
-            "$VERSION"
-
-      - name: Download patchright driver
-        run: |
-          cd patchright-java-release
-          bash scripts/download_driver.sh
-
-      - name: Build patchright-java
-        run: |
-          cd patchright-java-release
-          mvn install -DskipTests -Dspotbugs.skip=true -Dcheckstyle.skip=true
+          bash scripts/build.sh "$VERSION"
 
       - name: Publish to GitHub Packages
         run: |
