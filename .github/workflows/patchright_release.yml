@@ -72,7 +72,7 @@ jobs:
 
       - name: Build patcher
         run: |
-          cd patcher
+          cd patchright-java-patcher
           mvn -q package -DskipTests
 
       - name: Run patcher

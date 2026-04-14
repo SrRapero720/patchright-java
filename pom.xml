@@ -26,6 +26,7 @@
                 </file>
             </activation>
             <modules>
+                <!-- the real patchright-java,  build by patchright-java-patcher -->
                 <module>patchright-java-release</module>
             </modules>
         </profile>
