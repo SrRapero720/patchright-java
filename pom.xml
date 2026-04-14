@@ -6,15 +6,30 @@
 
     <groupId>cc.marbro.patchright</groupId>
     <artifactId>patchright-java-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.58.0</version>
     <packaging>pom</packaging>
 
     <name>Patchright Java Parent</name>
 
-    <!-- 默认包含 patcher 模块 -->
     <modules>
         <module>patchright-java-patcher</module>
+        <module>patchright-java-test</module>
+        <module>patchright-java-assist</module>
     </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!---->
+        <javaparser.version>3.26.4</javaparser.version>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
+
+        <!-- This version property will be injected dynamically via CI/CD test script. Default is for internal IDE resolution if possible -->
+        <!-- scripts/test_stealth.sh  >> -Dpatchright.version=$PATCHED_VERSION -->
+        <patchright.version>${project.version}</patchright.version>
+    </properties>
 
     <!-- 动态包含 release 模块（仅在其生成后才生效，避免初次 clone 时报错） -->
     <profiles>
@@ -32,15 +47,6 @@
         </profile>
     </profiles>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!---->
-        <javaparser.version>3.26.4</javaparser.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -48,7 +54,22 @@
                 <artifactId>javaparser-core</artifactId>
                 <version>${javaparser.version}</version>
             </dependency>
+            <dependency>
+                <groupId>cc.marbro.patchright</groupId>
+                <artifactId>patchright</artifactId>
+                <version>${patchright.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
