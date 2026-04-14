@@ -6,6 +6,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+/**
+ * @see FPscannerTest ✅
+ * @see BrotectorTest ❌
+ * @see CloudflareTest ❌
+ * @see CreepJSTest ❌
+ */
 public class BaseStealthTest {
 
     static BrowserContext context;

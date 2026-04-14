@@ -89,5 +89,6 @@ public class PatchrightManager {
         if (playwright != null) {
             playwright.close();
         }
+        playwright = null;
     }
 }
