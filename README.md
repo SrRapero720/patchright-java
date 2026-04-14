@@ -62,33 +62,46 @@ try (Playwright playwright = Playwright.create()) {
 > **Note**
 > We recommend using Google Chrome instead of Chromium. Install it via `playwright install chrome` and use it with `.setChannel("chrome")`.
 
-## Extended Patchright API
+## Documentation and API Reference
 
-### `isolatedContext` Parameter
+Patchright is a drop-in replacement for Playwright-Java. It includes several API additions to control stealth behavior and enhanced selector capabilities.
 
-All `evaluate`, `evaluateHandle`, `evalOnSelector`, and `evalOnSelectorAll` methods accept an additional `isolatedContext` parameter (default: `true`):
+### `isolatedContext` (boolean)
 
-```java
-// Execute in isolated context (default, stealth)
-Object result = page.evaluate("() => document.title");
+- **Default**: `true`
+- **Supported Methods**: `evaluate` and `evaluateHandle` across `Page`, `Frame`, `JSHandle`, `Worker`, and `Locator`.
 
-// Execute in main context (NOT stealth, same as original Playwright)
-Object result = page.evaluate("() => document.title", null, false);
-```
-
-- `true` (default): Executes JavaScript in an isolated utility context, avoiding `Runtime.enable` detection.
-- `false`: Executes in the main world context (same as original Playwright).
-
-### `focusControl` Parameter
-
-Browser launch and context creation options include `focusControl`:
+When `isolatedContext` is set to `true` (default), scripts are executed in an **isolated utility context** (Utility World). This prevents the detectable `Runtime.enable` feature from being activated in the main world, bypassing a major automation detection point.
 
 ```java
-Browser browser = playwright.chromium().launch(
-    new BrowserType.LaunchOptions()
-        .setFocusControl(true)
-);
+// Stealth Execution (Utility World) - Default
+page.evaluate("() => document.title"); 
+
+// Standard Execution (Main World) - No Patch
+page.evaluate("() => document.title", null, false);
 ```
+
+### `focusControl` (boolean)
+
+- **Default**: `false`
+- **Supported Options**: `BrowserType.LaunchOptions`, `BrowserType.LaunchPersistentContextOptions`, `Browser.NewContextOptions`, `Browser.NewPageOptions`.
+
+Controls browser focus management to prevent focus-based automation detection.
+
+```java
+BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
+    .setFocusControl(true);
+Browser browser = playwright.chromium().launch(options);
+```
+
+### Closed Shadow Roots
+
+Patchright natively supports interacting with elements inside **Closed Shadow Roots** without extra configuration.
+
+*   **Locators**: Standard locators automatically pierce through closed shadow DOMs.
+*   **XPaths**: Patchright enables XPath engine support for traversing into closed shadow roots.
+
+---
 
 ## How It Works
 
@@ -99,7 +112,7 @@ Patchright avoids using `Runtime.enable` by executing JavaScript in isolated Exe
 Patchright disables the Console API to prevent this leak. Console functionality will not work.
 
 ### Command Flags Leaks
-Patchright tweaks the default browser args:
+Patchright tweaks the default browser args to remove obvious automation fingerprints:
 - `--disable-blink-features=AutomationControlled` (added)
 - `--enable-automation` (removed)
 - `--disable-popup-blocking` (removed)
@@ -107,10 +120,13 @@ Patchright tweaks the default browser args:
 - `--disable-default-apps` (removed)
 - `--disable-extensions` (removed)
 
+### General Leaks
+Patchright patches various general leaks within the Playwright codebase, addressing suboptimal setups and common detection points that standard automation tools often miss.
+
 ## Stealth
 
 With the right setup, Patchright is considered undetectable and passes:
-- [Brotector](https://kaliiiiiiiiii.github.io/brotector/) ✅
+- [Brotector](https://ttlns.github.io/brotector/) ✅
 - [Cloudflare](https://cloudflare.com/) ✅
 - [Kasada](https://www.kasada.io/) ✅
 - [Akamai](https://www.akamai.com/products/bot-manager/) ✅
@@ -139,11 +155,15 @@ bash scripts/build.sh
 
 ### Project Structure
 
-```
+```text
 patchright-java/
-├── patcher/          # JavaParser-based AST patching tool
-├── scripts/          # Build and download scripts
-├── .github/          # CI/CD workflows
+├── .github/                  # CI/CD workflows and release automation
+├── patchright-java-patcher/   # JavaParser-based AST patching tool (The Core)
+├── patchright-java-release/   # Target directory for patched source and built artifacts
+├── patchright-java-test/      # Integration test module for stealth verification
+├── playwright-java/           # Submodule tracking official microsoft/playwright-java
+├── scripts/                   # Build, test, and download automation scripts
+├── pom.xml                    # Root Maven Project (Multi-module)
 ├── README.md
 └── LICENSE
 ```
