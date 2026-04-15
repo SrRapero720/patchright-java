@@ -137,7 +137,10 @@ public class IsolatedContextPatch {
                     if (insertIdx >= 0) {
                         Statement worldStmt = StaticJavaParser.parseStatement(
                             "params.addProperty(\"world\", isolatedContext ? \"utility\" : \"main\");");
+                        Statement isolatedContextStmt = StaticJavaParser.parseStatement(
+                            "params.addProperty(\"isolatedContext\", isolatedContext);");
                         stmts.add(insertIdx, worldStmt);
+                        stmts.add(insertIdx + 1, isolatedContextStmt);
                     }
                 });
 
@@ -299,20 +302,34 @@ public class IsolatedContextPatch {
      */
     private static void replaceWorldProperty(MethodDeclaration method) {
         method.getBody().ifPresent(body -> {
-            body.findAll(MethodCallExpr.class).forEach(call -> {
-                if (call.getNameAsString().equals("addProperty") && call.getArguments().size() == 2) {
-                    Expression firstArg = call.getArgument(0);
-                    if (firstArg.isStringLiteralExpr() &&
-                        firstArg.asStringLiteralExpr().getValue().equals("world")) {
-                        // Replace second argument with conditional
-                        call.setArgument(1, new ConditionalExpr(
-                            new NameExpr("isolatedContext"),
-                            new StringLiteralExpr("utility"),
-                            new StringLiteralExpr("main")
-                        ));
+            NodeList<Statement> stmts = body.getStatements();
+            int insertIdx = -1;
+            for (int i = 0; i < stmts.size(); i++) {
+                Statement stmt = stmts.get(i);
+                boolean foundWorld = false;
+                for (MethodCallExpr call : stmt.findAll(MethodCallExpr.class)) {
+                    if (call.getNameAsString().equals("addProperty") && call.getArguments().size() == 2) {
+                        Expression firstArg = call.getArgument(0);
+                        if (firstArg.isStringLiteralExpr() &&
+                            firstArg.asStringLiteralExpr().getValue().equals("world")) {
+                            // Replace second argument with conditional
+                            call.setArgument(1, new ConditionalExpr(
+                                new NameExpr("isolatedContext"),
+                                new StringLiteralExpr("utility"),
+                                new StringLiteralExpr("main")
+                            ));
+                            foundWorld = true;
+                        }
                     }
                 }
-            });
+                if (foundWorld) {
+                    insertIdx = i + 1;
+                    break;
+                }
+            }
+            if (insertIdx >= 0) {
+                body.getStatements().add(insertIdx, StaticJavaParser.parseStatement("params.addProperty(\"isolatedContext\", isolatedContext);"));
+            }
         });
     }
 
