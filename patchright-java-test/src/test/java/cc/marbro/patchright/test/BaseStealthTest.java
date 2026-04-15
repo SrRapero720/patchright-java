@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 /**
  * @see BrotectorTest ✅
  * @see FPscannerTest ✅
- * @see CloudflareTest ❌ToDo Check
+ * @see PixelscanTest ✅Assertions Doing
  * @see CreepJSTest ❌ToDo Check
  */
 public class BaseStealthTest {

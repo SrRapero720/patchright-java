@@ -27,9 +27,11 @@ echo "================================================"
 SUBMODULE_DIR="$PROJECT_DIR/playwright-java"
 RELEASE_DIR="$PROJECT_DIR/patchright-java-release"
 
+
 echo ""
 echo "[Step 1] Syncing playwright-java submodule..."
 cd "$PROJECT_DIR"
+rm -rf "$SUBMODULE_DIR"
 git submodule update --init --recursive
 
 if [ -n "$PLAYWRIGHT_VERSION" ]; then
