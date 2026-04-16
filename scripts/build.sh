@@ -86,7 +86,7 @@ bash scripts/download_driver.sh
 # Step 6: Build patchright-java
 echo ""
 echo "[Step 6] Building patchright-java Maven artifacts..."
-cd "$RELEASE_DIR"
+cd "$PROJECT_DIR"
 mvn install -DskipTests -Dspotbugs.skip=true -Dcheckstyle.skip=true
 
 echo ""

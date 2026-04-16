@@ -13,6 +13,10 @@
     <artifactId>patchright-java-patcher</artifactId>
     <description>AST-based patcher tool to transform playwright-java into patchright-java</description>
 
+    <properties>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <dependencies>
         <dependency>
