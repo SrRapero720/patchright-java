@@ -56,12 +56,14 @@ echo "[Step 2] Copying sources to patchright-java-release/..."
 rm -rf "$RELEASE_DIR"
 rsync -a --exclude='.git' "$SUBMODULE_DIR/" "$RELEASE_DIR/"
 # add .git to make it easier to diff with original sources after patching
-cd "$RELEASE_DIR/" && \
-  git init -q && \
-  git config user.name "patchright-java-bot" && \
-  git config user.email "kailbin@marbro.cc" && \
-  git add . && \
-  git commit -q -m "Initial commit"
+cd "$RELEASE_DIR/"
+git init -q
+git add .
+BOT_NAME="patchright-java-bot"
+BOT_EMAIL="kailbin@marbro.cc"
+GIT_AUTHOR_NAME="$BOT_NAME" GIT_AUTHOR_EMAIL="$BOT_EMAIL" \
+GIT_COMMITTER_NAME="$BOT_NAME" GIT_COMMITTER_EMAIL="$BOT_EMAIL" \
+git commit -q -m "Initial commit"
 echo "  Done."
 
 # Step 3: Build patcher
