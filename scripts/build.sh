@@ -18,6 +18,7 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Arguments
 PLAYWRIGHT_VERSION="${1:-}"
 GROUP_ID="${2:-cc.marbro.patchright}"
+SKIP_COMMIT="${3:-false}"
 
 echo "================================================"
 echo " Patchright Java Builder"
@@ -56,14 +57,9 @@ echo "[Step 2] Copying sources to patchright-java-release/..."
 rm -rf "$RELEASE_DIR"
 rsync -a --exclude='.git' "$SUBMODULE_DIR/" "$RELEASE_DIR/"
 # add .git to make it easier to diff with original sources after patching
-cd "$RELEASE_DIR/"
-git init -q
-git add .
-BOT_NAME="patchright-java-bot"
-BOT_EMAIL="kailbin@marbro.cc"
-GIT_AUTHOR_NAME="$BOT_NAME" GIT_AUTHOR_EMAIL="$BOT_EMAIL" \
-GIT_COMMITTER_NAME="$BOT_NAME" GIT_COMMITTER_EMAIL="$BOT_EMAIL" \
-git commit -q -m "Initial commit"
+if [ "$SKIP_COMMIT" != "true" ]; then
+  cd "$RELEASE_DIR/" && git init -q && git add . && git commit -q -m "Initial commit"
+fi
 echo "  Done."
 
 # Step 3: Build patcher

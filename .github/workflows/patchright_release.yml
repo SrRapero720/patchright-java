@@ -61,7 +61,7 @@ jobs:
       - name: Build and Patch Sources
         run: |
           VERSION=${{ needs.check-release.outputs.version }}
-          bash scripts/build.sh "$VERSION"
+          bash scripts/build.sh "$VERSION" "cc.marbro.patchright" "true"
 
       - name: Publish to GitHub Packages
         run: |
