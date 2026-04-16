@@ -57,9 +57,9 @@ rm -rf "$RELEASE_DIR"
 rsync -a --exclude='.git' "$SUBMODULE_DIR/" "$RELEASE_DIR/"
 # add .git to make it easier to diff with original sources after patching
 cd "$RELEASE_DIR/" && \
-  git config user.name "kailbin" && \
-  git config user.email "kailbin@marbro.cc" && \
   git init -q && \
+  git config user.name "patchright-java-bot" && \
+  git config user.email "kailbin@marbro.cc" && \
   git add . && \
   git commit -q -m "Initial commit"
 echo "  Done."
