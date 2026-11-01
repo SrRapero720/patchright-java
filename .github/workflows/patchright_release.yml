@@ -87,6 +87,16 @@ jobs:
 
             Based on [playwright-java v${{ needs.check-release.outputs.version }}](https://github.com/microsoft/playwright-java/releases/tag/v${{ needs.check-release.outputs.version }})
 
+            ## Installation (JitPack)
+            Add the `https://jitpack.io` repository and:
+            ```xml
+            <dependency>
+              <groupId>com.github.${{ github.repository_owner }}.${{ github.event.repository.name }}</groupId>
+              <artifactId>patchright</artifactId>
+              <version>v${{ needs.check-release.outputs.version }}</version>
+            </dependency>
+            ```
+
             ## Installation (GitHub Packages)
             Add to your `pom.xml`:
             ```xml
