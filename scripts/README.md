@@ -2,7 +2,7 @@
 [build.sh](build.sh)
 ```bash
 bash scripts/build.sh \
-  1.58.0 \
+  1.64.0 \
   cc.marbro.patchright
 ```
 

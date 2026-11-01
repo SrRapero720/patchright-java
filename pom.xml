@@ -6,7 +6,7 @@
 
     <groupId>cc.marbro.patchright</groupId>
     <artifactId>patchright-java-parent</artifactId>
-    <version>1.58.0</version>
+    <version>1.64.0</version>
     <packaging>pom</packaging>
 
     <name>Patchright Java Parent</name>
