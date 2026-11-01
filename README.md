@@ -145,6 +145,8 @@ This repository fully complies with the [official community-driven guidelines](h
 
 ### Building from source
 
+Requires Bash, Git, a JDK, Maven, `curl` or `wget`, `unzip`, `tar` and, for Playwright 1.63 and newer, Node.js with `npm` (the driver is assembled from npm packages).
+
 ```bash
 # Build with specific version
 bash scripts/build.sh 1.52.0
