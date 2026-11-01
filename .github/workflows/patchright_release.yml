@@ -21,11 +21,18 @@ jobs:
 
       - name: Check for new playwright-java release
         id: check
+        # INPUTS AND THIRD-PARTY TAGS GO THROUGH env AND A STRICT PATTERN, NEVER STRAIGHT INTO THE SCRIPT
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.playwright_version }}
         run: |
-          if [ -n "${{ github.event.inputs.playwright_version }}" ]; then
-            VERSION="${{ github.event.inputs.playwright_version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            VERSION="$INPUT_VERSION"
           else
             VERSION=$(curl -s https://api.github.com/repos/Kaliiiiiiiiii-Vinyzu/patchright/releases/latest | jq -r '.tag_name' | sed 's/^v//')
+          fi
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version '$VERSION'" >&2
+            exit 1
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
@@ -65,9 +72,9 @@ jobs:
           node-version: 'lts/*'
 
       - name: Build and Patch Sources
-        run: |
-          VERSION=${{ needs.check-release.outputs.version }}
-          bash scripts/build.sh "$VERSION" "cc.marbro.patchright" "true"
+        env:
+          VERSION: ${{ needs.check-release.outputs.version }}
+        run: bash scripts/build.sh "$VERSION" "cc.marbro.patchright" "true"
 
       - name: Publish to GitHub Packages
         run: |
